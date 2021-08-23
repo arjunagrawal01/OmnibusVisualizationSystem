@@ -1,0 +1,151 @@
+<!-- 
+    Copyright (C) 2021 BeulahWorks, LLC. - All Rights Reserved. All contents included in this file is proprietary to BeulahWorks, LLC. 
+    Any use, distribution, or modification of this code is strictly prohibited unless granted by BeulahWorks, LLC. 
+    Contact: David Nevill dnevill@beulahworks.com 
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="http://cdn.webix.com/edge/webix.css" type="text/css">
+        <link rel="stylesheet" href="http://cdn.webix.com/materialdesignicons/5.8.95/css/materialdesignicons.min.css" type="text/css" charset="utf-8">
+        <script src="http://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            webix.ui({
+                type: "clean", // Removes line between rows
+                rows: // Rows that seperate components
+                [
+                    { // Page header
+                        view: "label", // Webix label view
+                        align: "center", // Center the text
+                        label: "<span style='font-size:40px'>Omnibus Visualization System</span>", // CSS styled label
+                        height: 75 // Height of this section
+                    },
+                    {height: 75}, // Spacer
+                    { // Button columns label
+                        cols: // Split this row into two columns
+                        [
+                            {}, // Spacer
+                            { // One variable column
+                                view: "label", // Webix label view
+                                align: "center", // Center the text
+                                label: "<span style='font-size:25px'>One Variable Visualization</span>" // CSS styled label
+                            },
+                            {}, // Spacer
+                            { // Two variable column
+                                view: "label", // Webix label view
+                                align: "center", // Center the text
+                                label: "<span style='font-size:25px'>Two Variable Visualization</span>" // CSS styled label
+                            },
+                            {} // Spacer
+                        ]
+                    },
+                    {height: 50},
+                    { // First row of buttons
+                        type: "clean", // Removes line between columns
+                        cols: // Split this row into two columns
+                        [
+                            {}, // Spacer
+                            { // Histogram button
+                                view:"button", // Webix button view
+                                value:"Histogram", // Label for this button
+                                href:"Histogram.html", // File to open when button is clicked
+                                width: 200, // Width of this button
+                                height: 100, // Height of this button
+                                css: "webix_primary", // Webix CSS styling of this button
+                                click:function() // Call this function when button is clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {}, // Spacer
+                            { // Scatter Plot button
+                                view:"button", // Webix button view
+                                value:"Scatter Plot",  // Label for this button
+                                href:"ScatterPlot.html", // File to open when button is clicked
+                                width: 200, // Width of this button
+                                height: 100, // Height of this button
+                                css: "webix_primary", // Webix CSS styling of this button
+                                click:function() // Call this function when button is clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {} // Spacer
+                        ]
+                    },
+                    {height: 25}, // Spacer
+                    { // Second row of buttons
+                        type: "clean", // Removes line between columns
+                        cols: // Split this row into two columns
+                        [
+                            {}, // Spacer
+                            { // Boxplot button
+                                view:"button", // Webix button view
+                                value:"Boxplot", // Label for this button
+                                href:"Boxplot.html", // File to open when button is clicked
+                                width: 200, // Width of this button
+                                height: 100, // Height of this button
+                                css: "webix_primary", // Webix CSS styling of this button
+                                click:function() // Call this function when button is clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {}, // Spacer
+                            { // Stacked Bar Chart button
+                                view:"button", // Webix button view
+                                value:"Stacked Bar Chart", // Label for this button
+                                href:"StackedBarChart.html", // File to open when button is clicked
+                                width: 200, // Width of this button
+                                height: 100, // Height of this button
+                                css: "webix_primary", // Webix CSS styling of this button
+                                click:function() // Call this function when button is clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {} // Spacer
+                        ]
+                    },
+                    {height: 25}, // Spacer
+                    { // Third row of buttons
+                        type: "clean", // Removes line between columns
+                        cols: // Split this row into two columns
+                        [
+                            {}, // Spacer
+                            { // Barchart button
+                                view:"button", // Webix button view
+                                value:"Barchart", // Label for this button
+                                href:"BarChart.html", // File to open when button is clicked
+                                width: 200, // Width of this button
+                                height: 100, // Height of this button
+                                css: "webix_primary", // Webix CSS styling of this button
+                                click:function() // Call this function when button is clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {}, // Spacer
+                            { // Grouped Boxplot button
+                                view:"button", // Webix button view
+                                value:"Grouped Boxplot", // Label for this button
+                                href:"GroupedBoxplot.html", // File to open when button is clicked
+                                width: 200, // Width of this button
+                                height: 100, // Height of this button
+                                css: "webix_primary", // Webix CSS styling of this button
+                                click:function() // Call this function when button is clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {} // Spacer
+                        ]
+                    },
+                    {height: 75} // Spacer
+                ]
+            });
+        </script>
+    </body>
+</html>

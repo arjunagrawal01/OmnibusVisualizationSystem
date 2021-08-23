@@ -1,0 +1,204 @@
+<!-- 
+    Copyright (C) 2021 BeulahWorks, LLC. - All Rights Reserved. All contents included in this file is proprietary to BeulahWorks, LLC. 
+    Any use, distribution, or modification of this code is strictly prohibited unless granted by BeulahWorks, LLC. 
+    Contact: David Nevill dnevill@beulahworks.com 
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="http://cdn.webix.com/edge/webix.css" type="text/css">
+        <link rel="stylesheet" href="http://cdn.webix.com/materialdesignicons/5.8.95/css/materialdesignicons.min.css" type="text/css" charset="utf-8">
+        <script src="http://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            webix.ui({
+                type: "clean", // Removes line between rows
+                rows: // Rows that seperate components
+                [
+                    { // Page header
+                        view: "label", // Webix label view
+                        align: "center", // Center the text
+                        label: "<span style='font-size:40px'>Scatter Plot</span>", // CSS styled label
+                        height: 75 // Height of this section
+                    },
+                    {height: 50}, // Height of this spacer
+                    { // JSON and Chart type label
+                        cols: // Split this row into two columns
+                        [
+                            {
+                                view: "label", // Webix label view
+                                align: "center", // Center the text
+                                label: "<span style='font-size:25px'>JSON</span>" // CSS Styled label
+                            },
+                            {
+                                view: "label", // Webix label view
+                                align: "center", // Center the text
+                                label: "<span style='font-size:25px'>Diagram</span>" // CSS Styled label
+                            }
+                        ]
+                    },
+                    { // JSON input box and chart row
+                        gravity: 2.5, // Resizes this element when the window changes size
+                        type: "clean", // Removes line between columns
+                        cols: // Split this row into two columns
+                        [
+                            { // JSON input box
+                                view: "form", // Webix form view
+                                id: "json", // ID for this form
+                                elements: // Elements in this form
+                                [
+                                    {
+                                        view: "textarea", // Large textbox for user input
+                                        id: "jsonText" // ID for this textarea
+                                    }
+                                ]
+                            },
+                            { // Chart div
+                                view: "template", // Webix template view
+                                template: "<div id='chart' style='width:900px;height:700px;color:red;'></div>" // Div that the chart is placed into
+                            }
+                        ]
+                    },
+                    { // Button row
+                        view: "toolbar", // Webix toolbar view
+                        gravity: 1, // Resizes this element when the window changes size
+                        elements: // Elements in this toolbar
+                        [
+                            {}, // Spacer
+                            { // Draw Diagram Button
+                                view: "button", // Webix button
+                                type: "icon", // Type of button
+                                icon: "wxi-pencil", // Icon for this button
+                                label: "Draw Diagram", // Label for this button
+                                width: 200, // Width of this button
+                                css: "webix_primary", // Webix CSS styling for this button
+                                click: drawGraph // Call function when button is clicked
+                            },
+                            {width: 50},
+                            { // Main Menu Button
+                                view: "button", // Webix button
+                                type:"icon",  // Type of button
+                                icon:"mdi mdi-home", // Icon for this button
+                                label: "Main Menu", // Label for this button
+                                href: "MainMenu.html", // File this button opens on click
+                                width: 200, // Width of this button
+                                click: function() // Call function when clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {} // Spacer
+                        ]
+                    },
+                    {height: 75} // Spacer with this height
+                ]
+            });
+
+            // Parses JSON and draws the graph
+            function drawGraph(){
+                var input = $$("jsonText").getValue(); // Get JSON string
+                document.getElementById('chart').innerHTML = ""; // Clears out old error messages
+
+                try // Try to parse JSON from the form input
+                {
+                    var json = JSON.parse(input); // Parse string to JSON
+
+                    // Scatter plot
+                    var trace1 = {
+                        x: json[0].sample_values, // x values
+                        y: json[1].sample_values, // y values
+                        mode: 'markers', // type of points
+                        type: 'scatter', // type of chart
+                        name: 'Scatter'
+                    };
+
+                    fitLine = findLineByLeastSquares(json[0].sample_values, json[1].sample_values);
+
+                    var trace2 = {
+                        x: fitLine[0],
+                        y: fitLine[1],
+                        mode: 'lines',
+                        type: 'scatter',
+                        name: 'Linear Regression'
+                    }
+                    
+                    // Place plot into array
+                    var data = [trace1, trace2];
+
+                    // Layout of the diagram
+                    var layout = {
+                        xaxis: { title: json[0].variable }, // x-axis label
+                        yaxis: { title: json[1].variable }, // y-axis label
+                        title: json[0].variable + " vs " + json[1].variable // Chart title
+                    };
+
+                    // Display chart at this div id
+                    Plotly.newPlot('chart', data, layout);
+
+                }
+                catch(e) // Catch exception thrown from invalid JSON
+                {
+                    document.getElementById('chart').innerHTML = e.message; // Print error message at the id
+                }
+            }
+
+            // Function to find the linear least squares line
+            // used code from: https://dracoblue.net/dev/linear-least-squares-in-javascript/
+            function findLineByLeastSquares(values_x, values_y) {
+                var sum_x = 0; // Sum of x
+                var sum_y = 0; // Sum of y
+                var sum_xy = 0; // Sum of x*y
+                var sum_xx = 0; // Sum of x*x
+                var count = 0; // Number of points
+
+                // Variables for faster read/write speeds
+                var x = 0; // current x value
+                var y = 0; // current y value
+                var values_length = values_x.length; // Total number of x's / y's
+
+                // If the x values and y values are different lengths, throw an error
+                if (values_length != values_y.length) 
+                {
+                    throw new Error('The sample_values need to have same size');
+                }
+
+                // If an empty array is passed in, return an empty array
+                if (values_length === 0) {
+                    return [ [], [] ];
+                }
+
+                // Calculate the sum for each of the parts necessary
+                for (var v = 0; v < values_length; v++) {
+                    x = values_x[v]; // Store current x value
+                    y = values_y[v]; // Store current y value
+                    sum_x += x; // Add x value to sum of x's
+                    sum_y += y; // Add y value to sum of y's
+                    sum_xx += x*x; // Add x*x to sum of the x's
+                    sum_xy += x*y; // Add x*y to sum of the x's and y's
+                    count++; // Increment the counter
+                }
+
+                
+                // Calculate m and b for y = x * m + b
+                var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x); 
+                var b = (sum_y/count) - (m*sum_x)/count; 
+
+                // x and y result line
+                var result_values_x = [];
+                var result_values_y = [];
+
+                for (var v = 0; v < values_length; v++) {
+                    x = values_x[v]; // Store current x value
+                    y = x * m + b; // Calculate y value from y = mx + b
+                    result_values_x.push(x); // Put x value into result array
+                    result_values_y.push(y); // Put y value into result array
+                }
+
+                // Return result arrays
+                return [result_values_x, result_values_y];
+            }
+        </script>
+    </body>
+</html>

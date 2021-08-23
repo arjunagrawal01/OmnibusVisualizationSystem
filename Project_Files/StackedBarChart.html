@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="http://cdn.webix.com/edge/webix.css" type="text/css">
+        <link rel="stylesheet" href="http://cdn.webix.com/materialdesignicons/5.8.95/css/materialdesignicons.min.css" type="text/css" charset="utf-8">
+        <script src="http://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            webix.ui({
+                type: "clean", // Removes line between rows
+                rows: // Rows that seperate components
+                [
+                    { // Page header
+                        view: "label", // Webix label view
+                        align: "center", // Center the text
+                        label: "<span style='font-size:40px'>Stacked Bar Chart</span>", // CSS styled label
+                        height: 75 // Height of this section
+                    },
+                    {height: 50}, // Height of this spacer
+                    { // JSON and Chart type label
+                        cols: // Split this row into two columns
+                        [
+                            {
+                                view: "label", // Webix label view
+                                align: "center", // Center the text
+                                label: "<span style='font-size:25px'>JSON</span>" // CSS Styled label
+                            },
+                            {
+                                view: "label", // Webix label view
+                                align: "center", // Center the text
+                                label: "<span style='font-size:25px'>Diagram</span>" // CSS Styled label
+                            }
+                        ]
+                    },
+                    { // JSON input box and chart row
+                        gravity: 2.5, // Resizes this element when the window changes size
+                        type: "clean", // Removes line between columns
+                        cols: // Split this row into two columns
+                        [
+                            { // JSON input box
+                                view: "form", // Webix form view
+                                id: "json", // ID for this form
+                                elements: // Elements in this form
+                                [
+                                    {
+                                        view: "textarea", // Large textbox for user input
+                                        id: "jsonText" // ID for this textarea
+                                    }
+                                ]
+                            },
+                            { // Chart div
+                                view: "template", // Webix template view
+                                template: "<div id='chart' style='width:900px;height:700px;color:red;'></div>" // Div that the chart is placed into
+                            }
+                        ]
+                    },
+                    { // Button row
+                        view: "toolbar", // Webix toolbar view
+                        gravity: 1, // Resizes this element when the window changes size
+                        elements: // Elements in this toolbar
+                        [
+                            {}, // Spacer
+                            { // Draw Diagram Button
+                                view: "button", // Webix button
+                                type: "icon", // Type of button
+                                icon: "wxi-pencil", // Icon for this button
+                                label: "Draw Diagram", // Label for this button
+                                width: 200, // Width of this button
+                                css: "webix_primary", // Webix CSS styling for this button
+                                click: drawGraph // Call function when button is clicked
+                            },
+                            {width: 50},
+                            { // Main Menu Button
+                                view: "button", // Webix button
+                                type:"icon",  // Type of button
+                                icon:"mdi mdi-home", // Icon for this button
+                                label: "Main Menu", // Label for this button
+                                href: "MainMenu.html", // File this button opens on click
+                                width: 200, // Width of this button
+                                click: function() // Call function when clicked
+                                {
+    	                            window.open(this.config.href, "_self"); // Open the link in the same tab
+                                }
+                            },
+                            {} // Spacer
+                        ]
+                    },
+                    {height: 75} // Spacer with this height
+                ]
+            });
+
+            // Parses JSON and draws the graph
+            function drawGraph(){
+                var input = $$("jsonText").getValue(); // Get JSON string
+                document.getElementById('chart').innerHTML = ""; // Clears out old error messages
+
+                try // Try to parse JSON from the form input
+                {
+                    
+                    var json = JSON.parse(input); // Parse string to JSON
+
+                    // Bar 1
+                    var trace1 = {
+                        x: [json.col_var_values[0], json.col_var_values[1]], // x values
+                        y: [json.counts[0], json.counts[1]], // y values
+                        name: json.row_var_values[0], // Name of this plot
+                        type: 'bar' // Type of diagram
+                    };
+
+                    // Bar 2
+                    var trace2 = {
+                        x: [json.col_var_values[0], json.col_var_values[1]], // x values
+                        y: [json.counts[2], json.counts[3]], // y values
+                        name: json.row_var_values[1], // Name of this plot
+                        type: 'bar' // Type of diagram
+                    };
+
+                    // Combine the two bars into 1 array
+                    var data = [trace1, trace2];
+
+                    // The layout of the diagram
+                    var layout = {
+                        barmode: 'stack', // Tyope of chart
+                        title: json.row_var + " v.s. " + json.col_var // Title of chart
+                    };
+
+                    // Display chart at this div id
+                    Plotly.newPlot('chart', data, layout);
+
+                }
+                catch(e) // Catch exception thrown from invalid JSON
+                {
+                    document.getElementById('chart').innerHTML = e.message; // Print error message at the id
+                }
+            }
+        </script>
+    </body>
+</html>
